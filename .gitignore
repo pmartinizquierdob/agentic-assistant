@@ -1,6 +1,5 @@
 .env
 chatbot_agent/.env
-chatbot_agent/tokens.json
+chatbot_agent/token.json
 mcp_client_example/token.json
-mcp_services/credentials.json
 pb/*

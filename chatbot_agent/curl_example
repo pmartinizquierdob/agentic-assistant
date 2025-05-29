@@ -1,0 +1,33 @@
+curl -X POST http://localhost:8082/whatsapp/webhook \
+     -H "Content-Type: application/json" \
+     -d '{
+    "object": "whatsapp_business_account",
+    "entry": [{
+        "id": "12345",
+        "changes": [{
+            "value": {
+                "messaging_product": "whatsapp",
+                "metadata": {
+                    "display_phone_number_id": "123456789",
+                    "phone_number_id": "987654321"
+                },
+                "contacts": [{
+                    "profile": {
+                        "name": "Usuario de Prueba"
+                    },
+                    "wa_id": "5493815470353"
+                }],
+                "messages": [{
+                    "from": "5493815470353",
+                    "id": "wamid.xxxxxxxxxxxxx",
+                    "timestamp": "1678888888",
+                    "text": {
+                        "body": "Crea un nuevo contacto llamado 'Joe Doe' con el email joe.doe@example.com y el teléfono 1234567890."
+                    },
+                    "type": "text"
+                }]
+            },
+            "field": "messages"
+        }]
+    }]
+}'
