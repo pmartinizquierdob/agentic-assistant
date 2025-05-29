@@ -1,0 +1,160 @@
+// mcp_services.proto
+syntax = "proto3";
+
+package mcp;
+
+option go_package = "./pb"; // This will create a 'pb' directory for generated Go files
+
+// Represents OAuth2 tokens for Google API access
+message OAuthTokens {
+  string access_token = 1;
+  string refresh_token = 2;
+  string token_type = 3;
+  int64 expiry_unix = 4; // Unix timestamp of token expiry
+}
+
+// Common request message for all API calls
+message CommonRequest {
+  OAuthTokens auth_tokens = 1;
+}
+
+// Common response message for all API calls (for errors or general status)
+message CommonResponse {
+  string status = 1; // e.g., "OK", "ERROR"
+  string message = 2; // e.g., "Operation successful", "Error details"
+}
+
+// ====================================================================
+// Calendar Service
+// ====================================================================
+service CalendarService {
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse);
+  rpc CreateEvent(CreateEventRequest) returns (CreateEventResponse);
+}
+
+message ListEventsRequest {
+  CommonRequest common = 1;
+  string calendar_id = 2; // e.g., "primary"
+  int32 max_results = 3;
+}
+
+message Event {
+  string id = 1;
+  string summary = 2;
+  string description = 3;
+  string start_time = 4; // RFC3339 format
+  string end_time = 5;   // RFC3339 format
+  string html_link = 6;
+}
+
+message ListEventsResponse {
+  CommonResponse common = 1;
+  repeated Event events = 2;
+}
+
+message CreateEventRequest {
+  CommonRequest common = 1;
+  string calendar_id = 2;
+  string summary = 3;
+  string description = 4;
+  string start_time = 5; // RFC3339 format
+  string end_time = 6;   // RFC3339 format
+  string time_zone = 7;  // e.g., "America/Argentina/Buenos_Aires"
+}
+
+message CreateEventResponse {
+  CommonResponse common = 1;
+  Event created_event = 2;
+}
+
+// ====================================================================
+// Gmail Service
+// ====================================================================
+service GmailService {
+  rpc SendEmail(SendEmailRequest) returns (SendEmailResponse);
+  rpc ListMessages(ListMessagesRequest) returns (ListMessagesResponse);
+  rpc GetMessage(GetMessageRequest) returns (GetMessageResponse);
+}
+
+message SendEmailRequest {
+  CommonRequest common = 1;
+  string to = 2;
+  string subject = 3;
+  string body = 4;
+}
+
+message SendEmailResponse {
+  CommonResponse common = 1;
+  string message_id = 2;
+}
+
+message ListMessagesRequest {
+  CommonRequest common = 1;
+  int32 max_results = 2;
+  string query = 3; // e.g., "is:unread from:sender@example.com"
+}
+
+message Message {
+  string id = 1;
+  string snippet = 2;
+  repeated string label_ids = 3;
+  // For simplicity, we won't return full message body here, just basic info
+}
+
+message ListMessagesResponse {
+  CommonResponse common = 1;
+  repeated Message messages = 2;
+}
+
+message GetMessageRequest {
+  CommonRequest common = 1;
+  string message_id = 2;
+}
+
+message GetMessageResponse {
+  CommonResponse common = 1;
+  string message_id = 2;
+  string subject = 3;
+  string from = 4;
+  string to = 5;
+  string date = 6;
+  string body = 7; // HTML or Plain text body, depending on availability
+}
+
+
+// ====================================================================
+// Contacts Service
+// ====================================================================
+service ContactsService {
+  rpc ListConnections(ListConnectionsRequest) returns (ListConnectionsResponse);
+  rpc CreateContact(CreateContactRequest) returns (CreateContactResponse);
+}
+
+message ListConnectionsRequest {
+  CommonRequest common = 1;
+  int32 page_size = 2;
+}
+
+message Person {
+  string resource_name = 1;
+  string display_name = 2;
+  string email = 3;
+  string phone_number = 4;
+}
+
+message ListConnectionsResponse {
+  CommonResponse common = 1;
+  repeated Person people = 2;
+}
+
+message CreateContactRequest {
+  CommonRequest common = 1;
+  string display_name = 2;
+  string email = 3;
+  string phone_number = 4;
+}
+
+message CreateContactResponse {
+  CommonResponse common = 1;
+  Person created_contact = 2;
+}

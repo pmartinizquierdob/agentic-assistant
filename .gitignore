@@ -1,0 +1,6 @@
+.env
+chatbot_agent/.env
+chatbot_agent/tokens.json
+mcp_client_example/token.json
+mcp_services/credentials.json
+pb/*
